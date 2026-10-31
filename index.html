@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tímaskráning</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #222;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 28px;
+      border-radius: 16px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-top: 18px;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 24px;
+      padding: 16px;
+      border: none;
+      border-radius: 10px;
+      background: #1769e0;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .status {
+      margin-top: 25px;
+      padding: 14px;
+      background: #eef5ff;
+      border-radius: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="card">
+
+      <h1>Tímaskráning</h1>
+
+      <div class="subtitle">
+        Starfsmannakerfi
+      </div>
+
+      <label for="email">Netfang</label>
+      <input
+        id="email"
+        type="email"
+        placeholder="Netfang"
+      >
+
+      <label for="password">Lykilorð</label>
+      <input
+        id="password"
+        type="password"
+        placeholder="Lykilorð"
+      >
+
+      <button type="button">
+        Skrá inn
+      </button>
+
+      <div class="status">
+        Kerfið er í uppsetningu
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>
