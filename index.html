@@ -125,7 +125,11 @@
  <div id="worksiteInfo">
   <p><strong>Vinnustaður:</strong> <span id="worksiteName">Hleð...</span></p>
   <p><strong>Heimilisfang:</strong> <span id="worksiteAddress">Hleð...</span></p>
-</div>   
+</div>
+<div id="gpsStatus">
+  <p><strong>GPS:</strong> <span id="gpsText">Athuga staðsetningu...</span></p>
+</div>
+    
 
     <button class="logout" onclick="logout()">Skrá út</button>
   </div>
@@ -185,6 +189,7 @@
         : '<p>Starfsmaður</p>';
   await loadWorksite();  
   }
+  checkGPS();
 async function loadWorksite() {
   const { data, error } = await db
     .from("worksites")
@@ -203,6 +208,31 @@ async function loadWorksite() {
   document.getElementById("worksiteInfo").innerHTML =
     "<strong>" + data.name + "</strong><br>" +
     (data.address || "");
+}
+
+  function checkGPS() {
+  const gpsText = document.getElementById("gpsText");
+
+  if (!navigator.geolocation) {
+    gpsText.textContent = "GPS er ekki stutt í þessu tæki";
+    return;
+  }
+
+  gpsText.textContent = "Leita að staðsetningu...";
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      gpsText.textContent = "GPS tengt ✓";
+    },
+    (error) => {
+      gpsText.textContent = "GPS staðsetning ekki tiltæk";
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
+    }
+  );
 }
   async function logout() {
     await db.auth.signOut();
