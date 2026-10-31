@@ -130,7 +130,9 @@
   <p><strong>GPS:</strong> <span id="gpsText">Athuga staðsetningu...</span></p>
 </div>
     
-
+<button id="clockInBtn" onclick="clockIn()" style="background:#28a745; color:white; margin-bottom:12px;">
+  Mæta / Hefja vinnu
+</button>
     <button class="logout" onclick="logout()">Skrá út</button>
   </div>
 
@@ -234,6 +236,10 @@ async function loadWorksite() {
     }
   );
 }
+  
+async function clockIn() {
+  alert("Mætingartakki virkar ✓");
+}  
   async function logout() {
     await db.auth.signOut();
     location.reload();
