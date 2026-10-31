@@ -122,6 +122,11 @@
 
     <div id="adminStatus"></div>
 
+ <div id="worksiteInfo">
+  <p><strong>Vinnustaður:</strong> <span id="worksiteName">Hleð...</span></p>
+  <p><strong>Heimilisfang:</strong> <span id="worksiteAddress">Hleð...</span></p>
+</div>   
+
     <button class="logout" onclick="logout()">Skrá út</button>
   </div>
 
@@ -178,8 +183,27 @@
       data.is_admin
         ? '<p class="success"><strong>Stjórnandi</strong></p>'
         : '<p>Starfsmaður</p>';
+  await loadWorksite();  
+  }
+async function loadWorksite() {
+  const { data, error } = await db
+    .from("worksites")
+    .select("id, name, address, latitude, longitude, gps_radius_m")
+    .eq("active", true)
+    .order("id")
+    .limit(1)
+    .single();
+
+  if (error || !data) {
+    document.getElementById("worksiteInfo").innerHTML =
+      "<p>Enginn virkur vinnustaður fannst.</p>";
+    return;
   }
 
+  document.getElementById("worksiteInfo").innerHTML =
+    "<strong>" + data.name + "</strong><br>" +
+    (data.address || "");
+}
   async function logout() {
     await db.auth.signOut();
     location.reload();
