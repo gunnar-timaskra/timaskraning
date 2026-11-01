@@ -396,7 +396,7 @@ async function clockOut() {
 
   const { data: entry, error: findError } = await db
     .from("time_entries")
-    .select("id")
+    .select("id,clock_in")
     .eq("employee_id", employee.id)
     .is("clock_out", null)
     .order("clock_in", { ascending: false })
