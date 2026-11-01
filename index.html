@@ -176,7 +176,7 @@
   async function loadEmployee(userId) {
     const { data, error } = await db
       .from("employees")
-      .select("name, is_admin")
+      .select("id, name, is_admin")
       .eq("auth_user_id", userId)
       .single();
 
@@ -196,7 +196,8 @@
       data.is_admin
         ? '<p class="success"><strong>Stjórnandi</strong></p>'
         : '<p>Starfsmaður</p>';
-  await loadWorksite();  
+  await loadWorksite();
+await loadTodayHours(data.id);
   }
   checkGPS();
 async function loadWorksite() {
@@ -288,6 +289,35 @@ if (insertError) {
 }
 alert("Mæting skráð ✓");
 }
+async function loadTodayHours(employeeId) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const { data, error } = await db
+    .from("time_entries")
+    .select("clock_in, clock_out")
+    .eq("employee_id", employeeId)
+    .gte("clock_in", today.toISOString())
+    .order("clock_in", { ascending: true });
+
+  if (error || !data) return;
+
+  let dayHours = 0;
+  let extraHours = 0;
+
+  data.forEach(entry => {
+    const end = entry.clock_out ? entry.clock_out : new Date().toISOString();
+    const hours = calculateWorkHours(entry.clock_in, end);
+    dayHours += hours.dayHours;
+    extraHours += hours.extraHours;
+  });
+
+  document.getElementById("dayHours").textContent = dayHours.toFixed(2);
+  document.getElementById("extraHours").textContent = extraHours.toFixed(2);
+  document.getElementById("totalHours").textContent =
+    (dayHours + extraHours).toFixed(2);
+}  
+  
   function calculateWorkHours(clockIn, clockOut) {
   const start = new Date(clockIn);
   const end = new Date(clockOut);
