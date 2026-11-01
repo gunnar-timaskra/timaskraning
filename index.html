@@ -435,9 +435,28 @@ clock_out: clockOutTime
 await updateWorkButtons(employee.id);
 }
   
- async function openAdmin() {
-  alert("Stjórnborð opnast hér");
-} 
+async function openAdmin() {
+  const { data: employees, error } = await db
+    .from("employees")
+    .select("id, name, is_admin, active")
+    .eq("active", true)
+    .order("name");
+
+  if (error) {
+    alert("Villa við að sækja starfsmenn: " + error.message);
+    return;
+  }
+
+  let text = "STJÓRNBORÐ\n\nStarfsmenn:\n";
+
+  employees.forEach(employee => {
+    text += "• " + employee.name;
+    if (employee.is_admin) text += " (stjórnandi)";
+    text += "\n";
+  });
+
+  alert(text);
+}
   async function logout() {
     await db.auth.signOut();
     location.reload();
