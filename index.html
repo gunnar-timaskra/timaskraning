@@ -133,6 +133,7 @@
 <button id="clockInBtn" onclick="clockIn()" style="background:#28a745; color:white; margin-bottom:12px;">
   Mæta / Hefja vinnu
 </button>
+  <button id="clockOutBtn" onclick="clockOut()" style="background:#c62828; color:white; margin-bottom:12px;">Hætta / Ljúka vinnu</button> 
     <button class="logout" onclick="logout()">Skrá út</button>
   </div>
 
@@ -281,6 +282,10 @@ if (insertError) {
 }
 
 alert("Mæting skráð ✓");}
+async function clockOut() {
+  alert("Útskráningartakki virkar ✓");
+}  
+  
   async function logout() {
     await db.auth.signOut();
     location.reload();
