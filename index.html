@@ -280,8 +280,39 @@ if (insertError) {
   alert("Villa við að skrá mætingu: " + insertError.message);
   return;
 }
+function calculateWorkHours(clockIn, clockOut) {
+  const start = new Date(clockIn);
+  const end = new Date(clockOut);
 
-alert("Mæting skráð ✓");}
+  let dayMinutes = 0;
+  let extraMinutes = 0;
+
+  let current = new Date(start);
+
+  while (current < end) {
+    const next = new Date(Math.min(current.getTime() + 60000, end.getTime()));
+
+    const icelandTime = new Date(
+      current.toLocaleString("en-US", { timeZone: "Atlantic/Reykjavik" })
+    );
+
+    const hour = icelandTime.getHours();
+
+    if (hour >= 8 && hour < 16) {
+      dayMinutes += (next - current) / 60000;
+    } else {
+      extraMinutes += (next - current) / 60000;
+    }
+
+    current = next;
+  }
+
+  return {
+    dayHours: dayMinutes / 60,
+    extraHours: extraMinutes / 60
+  };
+}
+
 async function clockOut() {
   const { data: { user } } = await db.auth.getUser();
 
@@ -314,11 +345,17 @@ async function clockOut() {
     alert("Engin opin mæting fannst.");
     return;
   }
+const clockOutTime = new Date().toISOString();
+const hours = calculateWorkHours(entry.clock_in, clockOutTime);
 
+alert(
+  "Dagvinna: " + hours.dayHours.toFixed(2) + " klst.\n" +
+  "Nætur/álag: " + hours.extraHours.toFixed(2) + " klst."
+);
   const { error: updateError } = await db
     .from("time_entries")
     .update({
-      clock_out: new Date().toISOString()
+clock_out: clockOutTime      
     })
     .eq("id", entry.id);
 
