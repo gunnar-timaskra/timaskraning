@@ -289,6 +289,8 @@ if (insertError) {
   return;
 }
 alert("Mæting skráð ✓");
+ await
+updateWorkButtons(employee.id); 
 }
 async function updateWorkButtons(employeeId) {
   const { data, error } = await db
