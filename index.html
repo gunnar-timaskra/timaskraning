@@ -283,8 +283,52 @@ if (insertError) {
 
 alert("Mæting skráð ✓");}
 async function clockOut() {
-  alert("Útskráningartakki virkar ✓");
-}  
+  const { data: { user } } = await db.auth.getUser();
+
+  if (!user) {
+    alert("Þú ert ekki innskráður.");
+    return;
+  }
+
+  const { data: employee, error: employeeError } = await db
+    .from("employees")
+    .select("id")
+    .eq("auth_user_id", user.id)
+    .single();
+
+  if (employeeError || !employee) {
+    alert("Starfsmaður fannst ekki.");
+    return;
+  }
+
+  const { data: entry, error: findError } = await db
+    .from("time_entries")
+    .select("id")
+    .eq("employee_id", employee.id)
+    .is("clock_out", null)
+    .order("clock_in", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (findError || !entry) {
+    alert("Engin opin mæting fannst.");
+    return;
+  }
+
+  const { error: updateError } = await db
+    .from("time_entries")
+    .update({
+      clock_out: new Date().toISOString()
+    })
+    .eq("id", entry.id);
+
+  if (updateError) {
+    alert("Villa við að ljúka vinnu: " + updateError.message);
+    return;
+  }
+
+  alert("Vinnu lokið ✓");
+}
   
   async function logout() {
     await db.auth.signOut();
