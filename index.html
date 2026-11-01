@@ -427,6 +427,8 @@ clock_out: clockOutTime
   }
 
   alert("Vinnu lokið ✓");
+  await loadTodayHours(employee.id);
+await updateWorkButtons(employee.id);
 }
   
   async function logout() {
