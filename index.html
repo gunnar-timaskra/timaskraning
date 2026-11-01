@@ -280,7 +280,8 @@ if (insertError) {
   alert("Villa við að skrá mætingu: " + insertError.message);
   return;
 }
-function calculateWorkHours(clockIn, clockOut) {
+
+  function calculateWorkHours(clockIn, clockOut) {
   const start = new Date(clockIn);
   const end = new Date(clockOut);
 
