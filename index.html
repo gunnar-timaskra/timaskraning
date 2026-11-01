@@ -238,8 +238,49 @@ async function loadWorksite() {
 }
   
 async function clockIn() {
-  alert("Mætingartakki virkar ✓");
-}  
+const { data: { user } } = await db.auth.getUser();
+
+if (!user) {
+  alert("Þú ert ekki innskráður.");
+  return;
+}
+  const { data: employee, error } = await db
+  .from("employees")
+  .select("id")
+  .eq("auth_user_id", user.id)
+  .single();
+
+if (error || !employee) {
+  alert("Starfsmaður fannst ekki.");
+  return;
+}
+
+  const { data: worksite } = await db
+  .from("worksites")
+  .select("id")
+  .eq("active", true)
+  .order("id")
+  .limit(1)
+  .single();
+
+if (!worksite) {
+  alert("Enginn virkur vinnustaður fannst.");
+  return;
+}
+  const { error: insertError } = await db
+  .from("time_entries")
+  .insert({
+    employee_id: employee.id,
+    worksite_id: worksite.id,
+    clock_in: new Date().toISOString()
+  });
+
+if (insertError) {
+  alert("Villa við að skrá mætingu: " + insertError.message);
+  return;
+}
+
+alert("Mæting skráð ✓");}
   async function logout() {
     await db.auth.signOut();
     location.reload();
