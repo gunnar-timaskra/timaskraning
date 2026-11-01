@@ -198,6 +198,7 @@
         : '<p>Starfsmaður</p>';
   await loadWorksite();
 await loadTodayHours(data.id);
+  await updateWorkButtons(data.id);  
   }
   checkGPS();
 async function loadWorksite() {
@@ -289,7 +290,30 @@ if (insertError) {
 }
 alert("Mæting skráð ✓");
 }
-async function loadTodayHours(employeeId) {
+async function updateWorkButtons(employeeId) {
+  const { data, error } = await db
+    .from("time_entries")
+    .select("id")
+    .eq("employee_id", employeeId)
+    .is("clock_out", null)
+    .limit(1)
+    .maybeSingle();
+
+  if (error) return;
+
+  const clockInBtn = document.getElementById("clockInBtn");
+  const clockOutBtn = document.getElementById("clockOutBtn");
+
+  if (data) {
+    clockInBtn.style.display = "none";
+    clockOutBtn.style.display = "block";
+  } else {
+    clockInBtn.style.display = "block";
+    clockOutBtn.style.display = "none";
+  }
+}
+  
+  async function loadTodayHours(employeeId) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
