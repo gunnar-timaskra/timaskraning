@@ -139,7 +139,8 @@
   Nætur/álag: <span id="extraHours">0.00</span> klst.<br>
   Samtals: <span id="totalHours">0.00</span> klst.
 </div> 
-  <button id="clockOutBtn" onclick="clockOut()" style="background:#c62828; color:white; margin-bottom:12px;">Hætta / Ljúka vinnu</button> 
+  <button id="clockOutBtn" onclick="clockOut()" style="background:#c62828; color:white; margin-bottom:12px;">Hætta / Ljúka vinnu</button>
+   <button id="adminBtn" style="display:none;" onclick="openAdmin()">Stjórnborð</button> 
     <button class="logout" onclick="logout()">Skrá út</button>
   </div>
 
@@ -196,6 +197,7 @@
       data.is_admin
         ? '<p class="success"><strong>Stjórnandi</strong></p>'
         : '<p>Starfsmaður</p>';
+    document.getElementById("adminBtn").style.display = data.is_admin ? "block" : "none";
   await loadWorksite();
 await loadTodayHours(data.id);
   await updateWorkButtons(data.id);  
@@ -433,6 +435,9 @@ clock_out: clockOutTime
 await updateWorkButtons(employee.id);
 }
   
+ async function openAdmin() {
+  alert("Stjórnborð opnast hér");
+} 
   async function logout() {
     await db.auth.signOut();
     location.reload();
