@@ -141,6 +141,7 @@
 </div> 
   <button id="clockOutBtn" onclick="clockOut()" style="background:#c62828; color:white; margin-bottom:12px;">Hætta / Ljúka vinnu</button>
    <button id="adminBtn" style="display:none;" onclick="openAdmin()">Stjórnborð</button> 
+   <div id="adminPanel" style="display:none;"></div>
     <button class="logout" onclick="logout()">Skrá út</button>
   </div>
 
@@ -466,6 +467,8 @@ await updateWorkButtons(employee.id);
 }
   
 async function openAdmin() {
+  const panel = document.getElementById("adminPanel");
+
   const { data: employees, error: employeeError } = await db
     .from("employees")
     .select("id, name, is_admin, active")
@@ -494,31 +497,41 @@ async function openAdmin() {
     return;
   }
 
-  let text = "STJÓRNBORÐ - VINNUTÍMI Í DAG\n\n";
+  let html = `
+    <div style="margin-top:20px; padding:15px; border:1px solid #ccc; border-radius:10px;">
+      <h2>Stjórnborð – vinnutími í dag</h2>
+  `;
 
   employees.forEach(employee => {
     const employeeEntries = entries.filter(
       entry => entry.employee_id === employee.id
     );
 
+    let dayHours = 0;
+    let nightHours = 0;
     let totalHours = 0;
 
     employeeEntries.forEach(entry => {
-      const start = new Date(entry.clock_in);
-      const end = entry.clock_out ? new Date(entry.clock_out) : new Date();
-      totalHours += Math.max(0, (end - start) / 3600000);
+      const hours = calculateWorkHours(entry.clock_in, entry.clock_out);
+      dayHours += hours.dayHours;
+      nightHours += hours.nightHours;
+      totalHours += hours.totalHours;
     });
 
-    const dayHours = Math.min(totalHours, 8);
-    const extraHours = Math.max(totalHours - 8, 0);
-
-    text += employee.name + "\n";
-    text += "Dagvinna: " + dayHours.toFixed(2) + " klst.\n";
-    text += "Nætur/álag: " + extraHours.toFixed(2) + " klst.\n";
-    text += "Samtals: " + totalHours.toFixed(2) + " klst.\n\n";
+    html += `
+      <div style="padding:12px 0; border-bottom:1px solid #ddd;">
+        <strong>${employee.name}</strong><br>
+        Dagvinna: ${dayHours.toFixed(2)} klst.<br>
+        Nætur/álag: ${nightHours.toFixed(2)} klst.<br>
+        Samtals: ${totalHours.toFixed(2)} klst.
+      </div>
+    `;
   });
 
-  alert(text);
+  html += `</div>`;
+
+  panel.innerHTML = html;
+  panel.style.display = "block";
 }
   async function logout() {
     await db.auth.signOut();
