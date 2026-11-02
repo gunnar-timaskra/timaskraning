@@ -142,6 +142,7 @@
   <button id="clockOutBtn" onclick="clockOut()" style="background:#c62828; color:white; margin-bottom:12px;">Hætta / Ljúka vinnu</button>
    <button id="adminBtn" style="display:none;" onclick="openAdmin()">Stjórnborð</button> 
    <input type="date" id="adminDate" onchange="openAdmin()">
+   <input type="month" id="adminMonth" onchange="openAdmin()">
     <div id="adminPanel" style="display:none;"></div>
     <button class="logout" onclick="logout()">Skrá út</button>
   </div>
@@ -451,15 +452,24 @@ async function openAdmin() {
   }
 
  const dateInput = document.getElementById("adminDate");
+ const monthInput = document.getElementById("adminMonth"); 
 
 if (!dateInput.value) {
   dateInput.value = new Date().toISOString().split("T")[0];
 }
 
-const today = new Date(dateInput.value + "T00:00:00");
+let today;
+let tomorrow;
 
-const tomorrow = new Date(today);
-tomorrow.setDate(tomorrow.getDate() + 1); 
+if (monthInput.value) {
+  const [year, month] = monthInput.value.split("-").map(Number);
+  today = new Date(year, month - 1, 1);
+  tomorrow = new Date(year, month, 1);
+} else {
+  today = new Date(dateInput.value + "T00:00:00");
+  tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+}
 
   const { data: entries, error: timeError } = await db
     .from("time_entries")
