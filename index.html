@@ -141,7 +141,11 @@
 </div> 
   <button id="clockOutBtn" onclick="clockOut()" style="background:#c62828; color:white; margin-bottom:12px;">Hætta / Ljúka vinnu</button>
    <button id="adminBtn" style="display:none;" onclick="openAdmin()">Stjórnborð</button> 
-   <input type="date" id="adminDate" onchange="openAdmin()">
+  <select id="adminView" onchange="openAdmin()">
+  <option value="day">Dagur</option>
+  <option value="month">Mánuður</option>
+</select>
+    <input type="date" id="adminDate" onchange="openAdmin()">
    <input type="month" id="adminMonth" onchange="openAdmin()">
     <div id="adminPanel" style="display:none;"></div>
     <button class="logout" onclick="logout()">Skrá út</button>
@@ -450,8 +454,8 @@ async function openAdmin() {
     alert("Villa við að sækja starfsmenn: " + employeeError.message);
     return;
   }
-
- const dateInput = document.getElementById("adminDate");
+const viewInput = document.getElementById("adminView");
+  const dateInput = document.getElementById("adminDate");
  const monthInput = document.getElementById("adminMonth"); 
 
 if (!dateInput.value) {
@@ -461,7 +465,7 @@ if (!dateInput.value) {
 let today;
 let tomorrow;
 
-if (monthInput.value) {
+if (viewInput.value === "month") {
   const [year, month] = monthInput.value.split("-").map(Number);
   today = new Date(year, month - 1, 1);
   tomorrow = new Date(year, month, 1);
