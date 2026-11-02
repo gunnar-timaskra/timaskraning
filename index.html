@@ -377,18 +377,7 @@ async function updateWorkButtons(employeeId) {
     totalHours
   };
 }
-   else {
-      extraMinutes += (next - current) / 60000;
-    }
-
-    current = next;
-  }
-
-  return {
-    dayHours: dayMinutes / 60,
-    extraHours: extraMinutes / 60
-  };
-}
+  
 
 async function clockOut() {
   const { data: { user } } = await db.auth.getUser();
