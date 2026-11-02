@@ -377,27 +377,7 @@ async function updateWorkButtons(employeeId) {
     totalHours
   };
 }
-  function calculateWorkHours(clockIn, clockOut) {
-  const start = new Date(clockIn);
-  const end = new Date(clockOut);
-
-  let dayMinutes = 0;
-  let extraMinutes = 0;
-
-  let current = new Date(start);
-
-  while (current < end) {
-    const next = new Date(Math.min(current.getTime() + 60000, end.getTime()));
-
-    const icelandTime = new Date(
-      current.toLocaleString("en-US", { timeZone: "Atlantic/Reykjavik" })
-    );
-
-    const hour = icelandTime.getHours();
-
-    if (hour >= 8 && hour < 16) {
-      dayMinutes += (next - current) / 60000;
-    } else {
+   else {
       extraMinutes += (next - current) / 60000;
     }
 
