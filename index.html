@@ -338,7 +338,7 @@ async function updateWorkButtons(employeeId) {
     const end = entry.clock_out ? entry.clock_out : new Date().toISOString();
     const hours = calculateWorkHours(entry.clock_in, end);
     dayHours += hours.dayHours;
-    extraHours += hours.extraHours;
+    extraHours += hours.nightHours;
   });
 
   document.getElementById("dayHours").textContent = dayHours.toFixed(2);
@@ -427,7 +427,7 @@ const hours = calculateWorkHours(entry.clock_in, clockOutTime);
 
 alert(
   "Dagvinna: " + hours.dayHours.toFixed(2) + " klst.\n" +
-  "Nætur/álag: " + hours.extraHours.toFixed(2) + " klst."
+  "Nætur/álag: " + hours.nightHours.toFixed(2) + " klst."
 );
   const { error: updateError } = await db
     .from("time_entries")
