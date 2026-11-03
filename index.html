@@ -470,6 +470,25 @@ if (!confirmed) return;
 }  
 alert("Tímaskráning hefur verið leiðrétt!");
 await openAdmin();}
+ async function deleteTimeEntry(entryId) {
+  const confirmed = confirm(
+    "Viltu örugglega eyða þessari tímaskráningu?"
+  );
+
+  if (!confirmed) return;
+const { error } = await db
+  .from("time_entries")
+  .delete()
+  .eq("id", entryId);
+
+if (error) {
+  alert("Villa við eyðingu: " + error.message);
+  return;
+}
+
+alert("Tímaskráningu hefur verið eytt.");
+await openAdmin();
+ } 
   async function openAdmin() {
   const panel = document.getElementById("adminPanel");
 
@@ -543,7 +562,7 @@ const endTime = entry.clock_out
   ? new Date(entry.clock_out).toLocaleTimeString("is-IS", { hour: "2-digit", minute: "2-digit", hour12: false })
   : "Í vinnu";
 const hours = calculateWorkHours(entry.clock_in, entry.clock_out);
-dailyDetails += `<div>${date} | Mæting: ${startTime} | Vinnulok: ${endTime} | Dagvinna: ${hours.dayHours.toFixed(2)} klst. | Næturvinna: ${hours.nightHours.toFixed(2)} klst. | Samtals: ${hours.totalHours.toFixed(2)} klst.<button onclick="editTimeEntry('${entry.id}')">Leiðrétta</button></div>`;
+dailyDetails += `<div>${date} | Mæting: ${startTime} | Vinnulok: ${endTime} | Dagvinna: ${hours.dayHours.toFixed(2)} klst. | Næturvinna: ${hours.nightHours.toFixed(2)} klst. | Samtals: ${hours.totalHours.toFixed(2)} klst.<button onclick="editTimeEntry('${entry.id}')">Leiðrétta</button> <button onclick="deleteTimeEntry('${entry.id}')">Eyða</button></div>`;
 });
     html += `
       <div style="padding:12px 0; border-bottom:1px solid #ddd;">
