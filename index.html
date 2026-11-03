@@ -441,7 +441,10 @@ clock_out: clockOutTime
 await updateWorkButtons(employee.id);
 }
   
-async function openAdmin() {
+async function editTimeEntry(entryId) {
+  alert("Leiðrétting tímaskráningar: " + entryId);
+}
+  async function openAdmin() {
   const panel = document.getElementById("adminPanel");
 
   const { data: employees, error: employeeError } = await db
@@ -477,7 +480,7 @@ if (viewInput.value === "month") {
 
   const { data: entries, error: timeError } = await db
     .from("time_entries")
-    .select("employee_id, clock_in, clock_out")
+    .select("id, employee_id, clock_in, clock_out")
     .gte("clock_in", today.toISOString())
     .lt("clock_in", tomorrow.toISOString());
 
@@ -514,7 +517,7 @@ const endTime = entry.clock_out
   ? new Date(entry.clock_out).toLocaleTimeString("is-IS", { hour: "2-digit", minute: "2-digit" })
   : "Í vinnu";
 const hours = calculateWorkHours(entry.clock_in, entry.clock_out);
-dailyDetails += `<div>${date} | Mæting: ${startTime} | Vinnulok: ${endTime} | Dagvinna: ${hours.dayHours.toFixed(2)} klst. | Næturvinna: ${hours.nightHours.toFixed(2)} klst. | Samtals: ${hours.totalHours.toFixed(2)} klst.</div>`;
+dailyDetails += `<div>${date} | Mæting: ${startTime} | Vinnulok: ${endTime} | Dagvinna: ${hours.dayHours.toFixed(2)} klst. | Næturvinna: ${hours.nightHours.toFixed(2)} klst. | Samtals: ${hours.totalHours.toFixed(2)} klst.<button onclick="editTimeEntry('${entry.id}')">Leiðrétta</button></div>`;
 });
     html += `
       <div style="padding:12px 0; border-bottom:1px solid #ddd;">
