@@ -537,10 +537,10 @@ if (viewInput.value === "month") {
     });
     let dailyDetails = "";
 employeeEntries.forEach(entry => {
-  const date = new Date(entry.clock_in).toLocaleDateString("is-IS");
-  const startTime = new Date(entry.clock_in).toLocaleTimeString("is-IS", { hour: "2-digit", minute: "2-digit" });
+const date = new Date(entry.clock_in).toLocaleDateString("is-IS", { day: "2-digit", month: "2-digit", year: "numeric" });
+const startTime = new Date(entry.clock_in).toLocaleTimeString("is-IS", { hour: "2-digit", minute: "2-digit", hour12: false });
 const endTime = entry.clock_out
-  ? new Date(entry.clock_out).toLocaleTimeString("is-IS", { hour: "2-digit", minute: "2-digit" })
+  ? new Date(entry.clock_out).toLocaleTimeString("is-IS", { hour: "2-digit", minute: "2-digit", hour12: false })
   : "Í vinnu";
 const hours = calculateWorkHours(entry.clock_in, entry.clock_out);
 dailyDetails += `<div>${date} | Mæting: ${startTime} | Vinnulok: ${endTime} | Dagvinna: ${hours.dayHours.toFixed(2)} klst. | Næturvinna: ${hours.nightHours.toFixed(2)} klst. | Samtals: ${hours.totalHours.toFixed(2)} klst.<button onclick="editTimeEntry('${entry.id}')">Leiðrétta</button></div>`;
