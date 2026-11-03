@@ -442,8 +442,34 @@ await updateWorkButtons(employee.id);
 }
   
 async function editTimeEntry(entryId) {
-  alert("Leiðrétting tímaskráningar: " + entryId);
-}
+ const newStart = prompt("Sláðu inn nýja mætingu (ÁÁÁÁ-MM-DD HH:MM):");
+  const newEnd = prompt("Sláðu inn ný vinnulok (ÁÁÁÁ-MM-DD HH:MM):");
+  if (!newStart || !newEnd) return;
+  const startDate = new Date(newStart.replace(" ", "T"));
+ const endDate = new Date(newEnd.replace(" ", "T"));
+  if (
+  isNaN(startDate.getTime()) ||
+  isNaN(endDate.getTime()) ||
+  endDate <= startDate
+) {
+  alert("Röng dagsetning eða vinnulok eru á undan mætingu.");
+  return;
+  }
+    const confirmed = confirm(
+  "Viltu örugglega vista leiðrétta mætingu og vinnulok?"
+);
+if (!confirmed) return;
+  const { error } = await db.rpc("admin_edit_time_entry", {
+  p_entry_id: entryId,
+  p_clock_in: startDate.toISOString(),
+  p_clock_out: endDate.toISOString()
+});
+  if (error) {
+  alert("Villa við að vista leiðréttingu: " + error.message);
+  return;
+}  
+alert("Tímaskráning hefur verið leiðrétt!");
+await openAdmin();}
   async function openAdmin() {
   const panel = document.getElementById("adminPanel");
 
