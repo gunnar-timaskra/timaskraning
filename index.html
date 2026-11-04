@@ -632,9 +632,9 @@ dailyDetails += `<div>${date} | Mæting: ${startTime} | Vinnulok: ${endTime} | D
        entry.clock_out
   ? new Date(entry.clock_out).toLocaleTimeString("is-IS", { hour: "2-digit", minute: "2-digit", hour12: false })
         : "",
-      hours.dayHours.toFixed(1),
-hours.nightHours.toFixed(1),
-hours.totalHours.toFixed(1)
+      hours.dayHours.toFixed(1).replace(".", ","),
+hours.nightHours.toFixed(1).replace(".", ","),
+hours.totalHours.toFixed(1).replace(".", ",")
     ]);
   }
 
