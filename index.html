@@ -627,13 +627,13 @@ dailyDetails += `<div>${date} | Mæting: ${startTime} | Vinnulok: ${endTime} | D
     rows.push([
       employee?.name || "Óþekktur",
       new Date(entry.clock_in).toLocaleDateString("is-IS"),
-      new Date(entry.clock_in).toLocaleTimeString("is-IS"),
-      entry.clock_out
-        ? new Date(entry.clock_out).toLocaleTimeString("is-IS")
+     
+      new Date(entry.clock_in).toLocaleTimeString("is-IS", { hour: "2-digit", minute: "2-digit", hour12: false }),
+       ? new Date(entry.clock_out).toLocaleTimeString("is-IS", { hour: "2-digit", minute: "2-digit", hour12: false })
         : "",
-      hours.dayHours,
-      hours.nightHours,
-      hours.totalHours
+      hours.dayHours.toFixed(1),
+hours.nightHours.toFixed(1),
+hours.totalHours.toFixed(1)
     ]);
   }
 
