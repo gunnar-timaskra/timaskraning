@@ -537,7 +537,7 @@ if (viewInput.value === "month") {
   let html = `
     <div style="margin-top:20px; padding:15px; border:1px solid #ccc; border-radius:10px;">
       <h2>Stjórnborð – vinnutími í dag</h2>
-  `;
+  <button onclick="exportExcel()">Sækja Excel</button>`;
 
   employees.forEach(employee => {
     const employeeEntries = entries.filter(
@@ -579,6 +579,80 @@ dailyDetails += `<div>${date} | Mæting: ${startTime} | Vinnulok: ${endTime} | D
 
   panel.innerHTML = html;
   panel.style.display = "block";
+}
+  async function exportExcel() {
+  const month = document.getElementById("adminMonth")?.value;
+
+  if (!month) {
+    alert("Veldu fyrst mánuð í stjórnborðinu.");
+    return;
+  }
+
+  const start = month + "-01";
+  const [year, monthNumber] = month.split("-").map(Number);
+  const end = new Date(Date.UTC(year, monthNumber, 1))
+    .toISOString().slice(0, 10);
+
+  const { data: employees, error: employeeError } = await db
+    .from("employees")
+    .select("id, name")
+    .eq("active", true);
+
+  if (employeeError) {
+    alert("Villa: " + employeeError.message);
+    return;
+  }
+
+  const { data: entries, error } = await db
+    .from("time_entries")
+    .select("*")
+    .gte("clock_in", start)
+    .lt("clock_in", end)
+    .order("clock_in");
+
+  if (error) {
+    alert("Villa: " + error.message);
+    return;
+  }
+
+  const rows = [
+    ["Starfsmaður", "Dagsetning", "Mæting", "Vinnulok",
+     "Dagvinna", "Yfirvinna", "Samtals"]
+  ];
+
+  for (const entry of entries) {
+    const employee = employees.find(e => e.id === entry.employee_id);
+    const hours = calculateWorkHours(entry.clock_in, entry.clock_out);
+
+    rows.push([
+      employee?.name || "Óþekktur",
+      new Date(entry.clock_in).toLocaleDateString("is-IS"),
+      new Date(entry.clock_in).toLocaleTimeString("is-IS"),
+      entry.clock_out
+        ? new Date(entry.clock_out).toLocaleTimeString("is-IS")
+        : "",
+      hours.dayHours,
+      hours.nightHours,
+      hours.totalHours
+    ]);
+  }
+
+  const csv = "\uFEFF" + rows.map(row =>
+    row.map(value =>
+      '"' + String(value ?? "").replace(/"/g, '""') + '"'
+    ).join(";")
+  ).join("\r\n");
+
+  const blob = new Blob([csv], {
+    type: "text/csv;charset=utf-8;"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "Timaskraning-" + month + ".csv";
+  link.click();
+  URL.revokeObjectURL(url);
 }
   async function logout() {
     await db.auth.signOut();
